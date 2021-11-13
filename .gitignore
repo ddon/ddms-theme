@@ -1,0 +1,21 @@
+# general
+.DS_Store
+*.sql
+
+# front
+react/front/node_modules/
+react/front/static/
+react/front/build/
+react/front/dist/
+react/front/.parcel-cache/
+react/front/package-lock.json
+react/front/yarn.lock
+
+# wp
+bower_components/
+npm-debug.log
+vendor/
+.cache/
+includes/fotki-php/
+acf-json/database-tables/.cache
+composer.lock
