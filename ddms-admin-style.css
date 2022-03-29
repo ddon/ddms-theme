@@ -1,0 +1,18 @@
+#wpbody {
+  /* background-color: tomato !important; */
+  min-height: 90vh;
+  min-width: 100%;
+}
+
+#wpbody-content {
+  padding-bottom: 5px !important;
+}
+
+#wpcontent {
+  padding-left: 0;
+}
+
+span.job_status.active {
+  color: red;
+  font-weight: bold;
+}

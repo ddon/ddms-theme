@@ -2,28 +2,51 @@
 
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
+define( 'DDMS_THEME_DIR', dirname( __FILE__ ) );
+
+date_default_timezone_set( 'EST' );
 // if ( $_SERVER['REQUEST_URI'] === '/' ) {
 //     header( $_SERVER["SERVER_PROTOCOL"] . " 404 Not Found", true, 404 );
 //     die();
 // }
 
-date_default_timezone_set( 'EST' );
-
 // require_once 'vendor/autoload.php';
+include_once DDMS_THEME_DIR . "/includes/Entities/BaseEntity.class.php"; //loading BaseEntity first
 
-// $include_dirs = [
-//     "/includes/*.php",
-//     "/includes/api/*.php",
-//     "/includes/fotki-php/*.php",
-//     "/includes/Entities/*.php",
+$include_dirs = [
+    "/includes/*.php",
+    "/includes/api/*.php",
+    "/includes/Entities/*.php",
+    "/includes/fotki-php/ACF.php",
+    "/includes/fotki-php/Fields.php",
+    "/includes/fotki-php/Response.php",
+];
+
+foreach ( $include_dirs as $include_dir ) {
+    foreach ( glob( dirname( __FILE__ ) . $include_dir ) as $filename ) {
+        include_once $filename;
+    }
+}
+
+// $just_test = \DDMS\Entities\Area::getById(60); //skrasii. remove
+// $just_test = \DDMS\Entities\Area::getAllByDockId(15); //skrasii. remove
+// $just_test = \DDMS\Entities\Job::getById(128); //skrasii. remove
+// $just_test = \DDMS\Entities\Job::getAllActiveByDockId(15); //skrasii. remove
+// $just_test = \DDMS\Entities\Job::getAllActiveByDockSlug('dock-3b9a'); //skrasii. remove
+// $just_test = \DDMS\Entities\Dock::getById(15); //skrasii. remove
+// $job_data_test = [
+//     'job_status'    => true,  // bool
+//     // 'dock'          => '15',  // dock id: 15 || 16 || 17 
+//     'dock'          => 'dock-3b9a',  // dock slug: 3b9a (aka 15, aka dock 34) 
+//     'dock_area'     => '68',  // dock_area: "56" related dock_area 
+//     'title'         => 'aaa',  // title: "TSY Job title 1" (post_title)
+//     'description'   => 'aaa-descZZZ',
+//     'company'       => 'Tallinn Shipyardzzzz',  // existing company: "Tallinn Shipyard"
+//     'person'        => 'AAAPerson',  // person: "John Doe"
+//     'pin'           => '4444',  // pin: "2285" job pin. used to close active work
 // ];
-
-// foreach ( $include_dirs as $include_dir ) {
-//     foreach ( glob( dirname( __FILE__ ) . $include_dir ) as $filename ) {
-//         include_once $filename;
-//     }
-// }
-
+// $just_test = \DDMS\Entities\Job::addNew($job_data_test); //skrasii. remove
+// $just_test = \DDMS\Entities\Company::getAll(); //skrasii. remove
 
 add_action('init', function () {
 
@@ -32,16 +55,69 @@ add_action('init', function () {
             'labels'      => [
                 'name'          => __( 'Docks', 'ddms' ),
                 'singular_name' => __( 'Dock', 'ddms' ),
+                'add_new_item'  => __( 'Add New Dock', 'ddms' ),
             ],
             'public'      => true,
             'has_archive' => true,
             'rewrite'     => [ 'slug' => 'docks' ],
             'supports'    => [ 'title' ],
             // 'supports' => [ 'title', 'editor', 'author' ],
+            'menu_icon'   => 'dashicons-align-none'
+        ]
+    );
+
+    register_post_type('area',
+        [
+            'labels'      => [
+                'name'          => __( 'Areas', 'ddms' ),
+                'singular_name' => __( 'Area', 'ddms' ),
+                'add_new'       => __( 'Add Area', 'ddms' ),
+                'add_new_item'  => __( 'Add New Area', 'ddms' ),
+            ],
+            'public'      => true,
+            'has_archive' => true,
+            'rewrite'     => [ 'slug' => 'area' ],
+            'supports'    => [ 'title' ],
+            'menu_icon'   => 'dashicons-table-col-after'
+        ]
+    );
+
+    register_post_type('job',
+        [
+            'labels'      => [
+                'name'          => __( 'Jobs', 'ddms' ),
+                'singular_name' => __( 'Job', 'ddms' ),
+                'add_new'       => __( 'Add New Job', 'ddms' ),
+                'add_new_item'  => __( 'Add New Job', 'ddms' ),
+            ],
+            'public'      => true,
+            'has_archive' => true,
+            'rewrite'     => [ 'slug' => 'job' ],
+            'supports'    => [ 'title' ],
+            'menu_icon'   => 'dashicons-clipboard'
+        ]
+    );
+
+    register_post_type('company',
+        [
+            'labels'      => [
+                'name'          => __( 'Companies', 'ddms' ),
+                'singular_name' => __( 'Company', 'ddms' ),
+                'add_new_item'  => __( 'Add New Company', 'ddms' ),
+            ],
+            'public'      => true,
+            'has_archive' => true,
+            'rewrite'     => [ 'slug' => 'company' ],
+            'supports'    => [ 'title' ],
+            'menu_icon'   => 'dashicons-businessperson'
         ]
     );
 
 });
+
+
+//
+// WP Login page customization
 
 add_action( 'login_enqueue_scripts', function () { ?>
     <style type="text/css">
@@ -66,12 +142,60 @@ add_action( 'login_enqueue_scripts', function () { ?>
     </style>
 <?php });
 
-function my_login_logo_url() {
+add_filter( 'login_headerurl', function() {
     return home_url();
-}
-add_filter( 'login_headerurl', 'my_login_logo_url' );
+});
 
-function my_login_logo_url_title() {
+add_filter( 'login_headertext', function() {
     return 'BLRT Tallinn Shipyard';
+});
+
+
+// if( is_admin() ) {
+//     $screen = get_current_screen();
+//     if( $screen->base == 'dashboard' ) {
+//         // wp_redirect( admin_url( 'index.php?page=custom-dashboard' ) );
+//     }
+// }
+
+//
+// Removing all useless widgets
+function remove_dashboard_widgets(){
+    global $wp_meta_boxes;
+     
+    foreach( $wp_meta_boxes["dashboard"] as $position => $core ){
+        foreach( $core["core"] as $widget_id => $widget_info ){
+             
+            remove_meta_box( $widget_id, 'dashboard', $position );
+        }
+    } 
 }
-add_filter( 'login_headertext', 'my_login_logo_url_title' );
+add_action( 'wp_dashboard_setup', 'remove_dashboard_widgets' );
+
+/**
+ * WordPress function for redirecting users on login based on user role
+ */
+function aquaris_login_redirect( $url, $request, $user ) {
+    if ( $user && is_object( $user ) && is_a( $user, 'WP_User' ) ) {
+        if ( $user->has_cap( 'manage_options' ) ) {
+            // $url = admin_url();
+            $url = home_url( '/wp-admin/admin.php?page=ddms-admin' );
+        }
+    }
+    return $url;
+}
+ 
+add_filter( 'login_redirect', 'aquaris_login_redirect', 10, 3 );
+
+
+//
+// Adding DDMS widget
+function add_ddms_dashboard_widgets() {
+    global $wp_meta_boxes;
+    
+    wp_add_dashboard_widget('custom_ddms_widget', 'DDMS Overview', function(){
+        echo '<p>DDMS Dashboard Widget</p>';
+    }, null, null, 'normal', 'high' );
+}
+add_action('wp_dashboard_setup', 'add_ddms_dashboard_widgets');
+

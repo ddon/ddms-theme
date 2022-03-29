@@ -1,0 +1,4 @@
+span.job_status.active {
+  color: red;
+  font-weight: bold;
+}

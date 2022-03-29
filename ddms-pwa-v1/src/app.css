@@ -1,0 +1,65 @@
+:root {
+	--blrt-color-red: #d31145;
+	--blrt-color-red-50: #d3114550;
+	--blrt-color-blue: #0b2265;
+}
+
+body,
+section,
+h1,
+h2,
+h3 {
+	font-family: 'Open Sans', sans-serif !important;
+}
+
+body {
+	margin: 0;
+}
+
+button {
+	cursor: pointer;
+}
+
+.button,
+button {
+	display: inline-block;
+	padding: 5px 25px;
+	margin: 10px 0 20px 0;
+	color: white;
+	font-size: 18px;
+	background-color: var(--blrt-color-blue);
+	text-decoration: none;
+	border-radius: 25px;
+	border: 1px solid var(--blrt-color-blue);
+	/* box-shadow: 2px 4px 10px #a9a9a9; */
+	transition: 0.5s background, color;
+}
+
+.button:hover,
+button:hover {
+	color: var(--blrt-color-blue);
+	background-color: white;
+	border: 1px solid var(--blrt-color-blue);
+}
+
+/* SVG Dock Map Styles */
+g[id*='-areas'] path {
+	stroke-width: 1px;
+	fill: rgba(255, 255, 255, 0.01);
+}
+
+g[id*='-areas'] path.active_area {
+	stroke-width: 2px;
+	fill: var(--blrt-color-red-50);
+	stroke: var(--blrt-color-red) !important;
+}
+
+g[id*='-areas'] path:hover {
+	stroke-width: 2px;
+	fill: rgba(182, 255, 175, 0.5);
+	stroke: #04c900 !important;
+}
+
+g[id*='-areas'] {
+	cursor: pointer;
+}
