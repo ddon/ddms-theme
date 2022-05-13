@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<form action="/wp-admin/admin-ajax.php?action=get_voice_transcription" method="post" enctype="multipart/form-data">
+  <input type="radio" id="dock34" name="dock" value="dock34" checked>
+  <label for="dock34">dock34</label>
+  <input type="radio" id="dock2" name="dock" value="dock2">
+  <label for="dock2">dock2</label>
+  <input type="radio" id="dock3" name="dock" value="dock3">
+  <label for="dock3">dock3</label><br>
+
+  Select wav/ogg audio to upload:<br>
+  <input type="file" name="audioFile" id="audioFile" accept="audio/x-wav, audio/wav, audio/ogg"><br>
+  <input type="submit" value="Upload Audio" name="submit">
+</form>
+
+</body>
+</html>
+

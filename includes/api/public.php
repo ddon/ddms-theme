@@ -17,3 +17,6 @@ add_action( 'wp_ajax_nopriv_get_area_by_id', ['DDMS\API\Area', 'getById'] );
 
 // Company
 add_action( 'wp_ajax_nopriv_get_all_companies', ['DDMS\API\Company', 'getAll'] );
+
+// Voice
+add_action( 'wp_ajax_nopriv_get_voice_transcription', ['DDMS\API\Voice', 'getAudioTranscription'] );
