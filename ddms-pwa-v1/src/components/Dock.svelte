@@ -1,44 +1,45 @@
 <script lang="js">
 	// import { page } from '$app/stores';
+
 	import { onMount } from 'svelte';
 	import jQuery from 'jquery';
 
-	import api from './lib/api';
+	import api from '$lib/api';
 
-	import Jobs from './Jobs.svelte';
-	import DockHeader from './DockHeader.svelte';
-	import DockMap from './DockMap.svelte';
+	import RequestLoader from '$components/RequestLoader.svelte';
+	import DockHeader from '$components/DockHeader.svelte';
+	import DockMap from '$components/DockMap.svelte';
+	import Jobs from '$components/Jobs.svelte';
 
 	export let dockID = '';
 
-	console.log("DOCK ID: " + dockID);
 	// const dockSlug = $page.url.pathname.replace(/\//g, '');
 	const dockSlug = 'dock-' + dockID.replace(/\//g, '');
 
 	let dock = {};
 	let activeJobs = {};
 	let remoteSwitch = {};
-	
-	let loading = true;
-	
-	async function getSwitchStatus() {
 
+	let loading = true;
+
+	const getSwitchStatus = async () => {
+		return; // TODO:
 		remoteSwitch = await api.getLedPanelStatus();
 
-		console.log("Getting switch data...");
+		console.log('Getting switch data...');
 
 		if (remoteSwitch.data) {
-			console.log("LED Panel Status: ");
+			console.log('LED Panel Status: ');
 			console.log(remoteSwitch.data);
 		}
+	};
 
-	}
-
-	async function switchLedPanel(action = '') {
-		console.log("LED Button Clicked: " + action + " for dock: " + dockID);
+	const switchLedPanel = async (action = '') => {
+		return; // TODO:
+		console.log('LED Button Clicked: ' + action + ' for dock: ' + dockID);
 		await api.switchLedPanel(action);
 		await getSwitchStatus();
-	}
+	};
 
 	// async function getSwitchStatus() {
 
@@ -55,7 +56,7 @@
 	// 	}).catch(err => console.log(err));
 	// }
 
-	async function getDockData() {
+	const getDockData = async () => {
 		dock = await api.getDockBySlug({ slug: dockSlug });
 		activeJobs = await api.getActiveJobsByDockSlug({ slug: dockSlug });
 		loading = false;
@@ -66,45 +67,43 @@
 		// 	loading = false;
 		// 	return r.json();
 		// });
-	}
+	};
 
-	function renderAreaStatLabels (areaStats, positionOffset) {
-
-		if (! areaStats ) {
-			console.error("renderAreaStatLabels failed");
+	const renderAreaStatLabels = (areaStats, positionOffset) => {
+		if (!areaStats) {
+			console.error('renderAreaStatLabels failed');
 			return;
 		}
 
 		let areaPos;
 
 		// creating and positioning number lable elements
-		Object.entries(areaStats).forEach(([area_id, job_count])=> {
-		
+		Object.entries(areaStats).forEach(([area_id, job_count]) => {
 			areaPos = jQuery(`#a-${area_id}`).position();
 
 			//creating
-			jQuery(".dock-map").after(`<span class='a-${area_id}-area_stat stat a-${area_id}-mark'>${job_count}</span>`);
+			jQuery('.dock-map').after(
+				`<span class='a-${area_id}-area_stat stat a-${area_id}-mark'>${job_count}</span>`
+			);
 
 			//positioning
 			jQuery(`.a-${area_id}-area_stat`).css({
-				top : areaPos.top + positionOffset,
-				left : areaPos.left + positionOffset
+				top: areaPos.top + positionOffset,
+				left: areaPos.left + positionOffset
 			});
 		});
-	}
+	};
 
-	
 	$: {
-
 		let areaStatLabels = {};
 
 		if (activeJobs.data && activeJobs.ok) {
-			console.log("Active jobs data:");
+			console.log('Active jobs data:');
 			// console.log("Length: " + activeJobs.data.length);
 			console.log(activeJobs.data);
 			// clear old classes
 			jQuery('.active_area').removeClass('active_area');
-			// resetting area stat lable counters 
+			// resetting area stat lable counters
 			jQuery('span.stat').remove();
 
 			activeJobs.data.forEach((job) => {
@@ -124,16 +123,16 @@
 			renderAreaStatLabels(areaStatLabels, statPosOffset);
 
 			// re-rendering area's stats position on window resize
-			jQuery( window ).resize(function() {
-				let activeAreas = Array.from( jQuery('.active_area') );
+			jQuery(window).resize(function () {
+				let activeAreas = Array.from(jQuery('.active_area'));
 
-				activeAreas.forEach(a => {
+				activeAreas.forEach((a) => {
 					let aNewPos = jQuery(a).position();
 					let aMark = a.className.baseVal.split(' ')[1];
 
-					jQuery(".stat." + aMark).css({
-						top : aNewPos.top + statPosOffset,
-						left : aNewPos.left + statPosOffset
+					jQuery('.stat.' + aMark).css({
+						top: aNewPos.top + statPosOffset,
+						left: aNewPos.left + statPosOffset
 					});
 				});
 			});
@@ -142,14 +141,14 @@
 		}
 
 		if (remoteSwitch.data) {
-			console.log("Switch STATAUS: ");
+			console.log('Switch STATAUS: ');
 			console.log(remoteSwitch.data.switch);
 			if (activeJobs.data && activeJobs.data.length > 0) {
 				if (remoteSwitch.data.switch === 'off') {
-					switchLedPanel("on");
+					switchLedPanel('on');
 				}
 			} else if (remoteSwitch.data.switch === 'on') {
-				switchLedPanel("off");
+				switchLedPanel('off');
 			}
 		}
 	}
@@ -160,20 +159,20 @@
 	});
 
 	let svgMap = '';
+
 	$: if (dock.ok) {
 		svgMap = dock.data.svg_imagemap;
 	}
-
-
 </script>
 
 <div class="dock">
-	{#if  remoteSwitch.data && remoteSwitch.data.switch}
+	{#if remoteSwitch.data && remoteSwitch.data.switch}
 		<!-- <pre>Switch: {JSON.stringify(remoteSwitch, undefined, 2)}</pre> -->
 		<div class="switch_buttons">
 			<p>Led Panel Status: {remoteSwitch.data.switch}</p>
 		</div>
 	{/if}
+
 	{#if dock.ok}
 		<DockHeader {dock} jobs={activeJobs} />
 
@@ -186,7 +185,8 @@
 		</section>
 	{:else}
 		<section>
-			<h1>Loading Dock Data...</h1>
+			<RequestLoader />
+			<h1>Loading Dock Data</h1>
 		</section>
 	{/if}
 </div>
@@ -206,22 +206,22 @@
 		flex: 1;
 	}
 
-	:global(span[class*="-area_stat"]) {
-         display: flex;
-         justify-content: center;
-         align-items: center;
+	:global(span[class*='-area_stat']) {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
-         position: absolute;
+		position: absolute;
 
-         color: white;
-         background-color: var(--blrt-color-red);
-         border-radius: 50%;
-         height: 25px;
-         width: 25px;
+		color: white;
+		background-color: var(--red);
+		border-radius: 50%;
+		height: 25px;
+		width: 25px;
 
-         cursor: default;
-         pointer-events: none;
-    }
+		cursor: default;
+		pointer-events: none;
+	}
 
 	.switch_buttons {
 		position: absolute;

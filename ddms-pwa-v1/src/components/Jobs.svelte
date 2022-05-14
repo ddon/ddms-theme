@@ -24,7 +24,7 @@
 </script>
 
 {#if jobs.ok}
-<div class="jobs active_jobs">
+	<div class="jobs active_jobs">
 		<h2>Active Jobs</h2>
 		<table>
 			<tr>
@@ -91,7 +91,7 @@
 		text-align: center;
 	}
 	button.close {
-		background-color: var(--blrt-color-red);
-		border-color: var(--blrt-color-red);
+		background-color: var(---red);
+		border-color: var(---red);
 	}
 </style>

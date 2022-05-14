@@ -3,7 +3,7 @@
 	import { fly, fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
-	import api from './lib/api';
+	import api from '$lib/api';
 
 	export let isOpen;
 	export let onJobCloseSuccess;
@@ -157,6 +157,7 @@
 		font-size: 24px;
 	}
 
+	/*
 	p {
 		text-align: center;
 		margin-top: 16px;
@@ -174,13 +175,12 @@
 	label.error {
 		background-color: #f6482c;
 		color: white;
-		/* font-weight: bold; */
+		font-weight: bold;
 	}
 
 	label.success {
 		background-color: #98f62c;
-		/* color: white; */
-		/* font-weight: bold; */
+		font-weight: bold;
 	}
 
 	label,
@@ -219,7 +219,7 @@
 
 	input[type='submit'] {
 		width: 100%;
-		background-color: var(--blrt-color-blue);
+		background-color: var(--blue);
 		color: white;
 		padding: 14px 20px;
 		margin: 8px 0;
@@ -250,6 +250,7 @@
 	}
 	button.close {
 		background-color: white;
-		color: var(--blrt-color-blue);
+		color: var(--blue);
 	}
+*/
 </style>

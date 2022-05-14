@@ -3,7 +3,7 @@
 	import { fly, fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
-	import api from './lib/api';
+	import api from '$lib/api';
 
 	export let isOpen;
 	export let title;
@@ -84,6 +84,8 @@
 	// 		return "no-error";
 	// 	}
 	// }
+
+	// input autofocus
 </script>
 
 {#if isOpen}
@@ -104,7 +106,6 @@
 							name="title"
 							id="title"
 							required
-							autofocus
 							oninvalid="this.setCustomValidity('Please enter job title / Введите название работы')"
 							oninput="this.setCustomValidity('')"
 						/>
@@ -137,7 +138,7 @@
 							>Person / Исполнитель
 							<input type="text" name="person" id="person" required />
 						</label>
-	
+
 						<label for="pin" class={addingJobErrorClasses.pin}
 							>PIN
 							<input type="number" name="pin" id="pin" required />
@@ -184,7 +185,7 @@
 		text-align: center;
 		font-size: 24px;
 	}
-
+	/*
 	p {
 		text-align: center;
 		margin-top: 16px;
@@ -227,7 +228,7 @@
 		border-radius: 4px;
 		box-sizing: border-box;
 	}
-	
+
 	input:disabled {
 		background-color: rgb(231, 231, 231);
 	}
@@ -238,7 +239,7 @@
 
 	input[type='submit'] {
 		width: 100%;
-		background-color: var(--blrt-color-blue);
+		background-color: var(--blue);
 		color: white;
 		padding: 14px 20px;
 		margin: 8px 0;
@@ -246,7 +247,7 @@
 		border-radius: 4px;
 		cursor: pointer;
 	}
-
+*/
 	form#add_new {
 		border-radius: 5px;
 		background-color: #f2f2f2;
@@ -265,6 +266,6 @@
 	}
 	button.close {
 		background-color: white;
-		color: var(--blrt-color-blue);
+		color: var(--blue);
 	}
 </style>

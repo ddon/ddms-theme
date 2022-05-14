@@ -1,65 +1,68 @@
-import net from './net';
+import settings from '$settings';
+import net from '$lib/net';
 
-
-const DOMAIN_URL = 'https://ddms.greenoak.ee';
-const WP_ADMIN_URL = `${DOMAIN_URL}/wp-admin/admin-ajax.php`;
-
+const WP_ADMIN_URL = `${settings.DOMAIN_URL}/wp-admin/admin-ajax.php`;
+const RELAY_URL = `${settings.RELAY_DOMAIN_URL}/relay.php`;
 
 const addNewJob = async (params = {}) => {
-    const url = `${WP_ADMIN_URL}?action=add_new_job`;
+	const url = `${WP_ADMIN_URL}?action=add_new_job`;
 
-    const res = await net.post(url, {
-        ...params,
-    });
+	const res = await net.post(url, {
+		...params
+	});
 
-    return res;
+	return res;
 };
 
 const closeJobByPin = async (params = {}) => {
-    const url = `${WP_ADMIN_URL}?action=close_job_by_pin`;
+	const url = `${WP_ADMIN_URL}?action=close_job_by_pin`;
 
-    const res = await net.post(url, {
-        ...params,
-    });
+	const res = await net.post(url, {
+		...params
+	});
 
-    return res;
+	return res;
 };
 
 const getDockBySlug = async (params = {}) => {
-    const res = await net.get(WP_ADMIN_URL, {
-        action: 'get_dock_by_slug',
-        slug: params.slug,
-    });
+	const res = await net.get(WP_ADMIN_URL, {
+		action: 'get_dock_by_slug',
+		slug: params.slug
+	});
 
-    return res;
+	return res;
 };
 
 const getActiveJobsByDockSlug = async (params = {}) => {
-    const res = await net.get(WP_ADMIN_URL, {
-        action: 'get_active_jobs_by_dock_slug',
-        slug: params.slug,
-    });
+	const res = await net.get(WP_ADMIN_URL, {
+		action: 'get_active_jobs_by_dock_slug',
+		slug: params.slug
+	});
 
-    return res;
+	return res;
 };
 
 const getLedPanelStatus = async () => {
-    const res = await net.get(`http://localhost:8080/relay.php?cmd=info`);
+	const res = await net.get(RELAY_URL, {
+		cmd: 'info'
+	});
 
-    return res;
+	return res;
 };
 
 const switchLedPanel = async (cmd = '') => {
-    const res = await net.get(`http://localhost:8080/relay.php?cmd=${cmd}`);
+	const res = await net.get(RELAY_URL, {
+		cmd
+	});
 
-    return res;
+	return res;
 };
 
 export default {
-    addNewJob,
-    getDockBySlug,
-    closeJobByPin,
-    getActiveJobsByDockSlug,
-    getLedPanelStatus,
-    switchLedPanel
+	addNewJob,
+	getDockBySlug,
+	closeJobByPin,
+	getActiveJobsByDockSlug,
+	getLedPanelStatus,
+	switchLedPanel
 };

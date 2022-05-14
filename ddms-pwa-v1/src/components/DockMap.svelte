@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { Modals, closeModal, openModal, modals } from 'svelte-modals';
-import { debug } from 'svelte/internal';
+	import { debug } from 'svelte/internal';
 	import { fade } from 'svelte/transition';
 	import ModalAddJob from './ModalAddJob.svelte';
 
@@ -21,7 +21,7 @@ import { debug } from 'svelte/internal';
 			dock_id: dock_id,
 			area_id: area_id,
 			onJobAddSuccess: () => {
-				console.log("### Dock Map: Job Added Successfully ###");
+				console.log('### Dock Map: Job Added Successfully ###');
 				closeModal();
 				getDockData();
 			}
@@ -44,7 +44,7 @@ import { debug } from 'svelte/internal';
 
 	async function handleAreaClick(e) {
 		// console.log('Shapes:');
-		console.log("handleAreaClick:");
+		console.log('handleAreaClick:');
 		console.log(e.target.id);
 
 		if (shapes.indexOf(e.target) >= 0) {
@@ -89,5 +89,26 @@ import { debug } from 'svelte/internal';
 <style>
 	.dock-map {
 		width: 100%;
+	}
+
+	:global(g[id*='-areas'] path) {
+		stroke-width: 1px;
+		fill: rgba(255, 255, 255, 0.01);
+	}
+
+	:global(g[id*='-areas'] path.active_area) {
+		stroke-width: 2px;
+		fill: var(--red-50);
+		stroke: var(--red) !important;
+	}
+
+	:global(g[id*='-areas'] path:hover) {
+		stroke-width: 2px;
+		fill: rgba(182, 255, 175, 0.5);
+		stroke: #04c900 !important;
+	}
+
+	:global(g[id*='-areas']) {
+		cursor: pointer;
 	}
 </style>
