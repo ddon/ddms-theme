@@ -1,72 +1,60 @@
 <script lang="js">
-	// import { page } from '$app/stores';
-
 	import { onMount } from 'svelte';
 	import jQuery from 'jquery';
 
 	import api from '$lib/api';
+	import apiRelay from '$lib/apiRelay';
 
 	import RequestLoader from '$components/RequestLoader.svelte';
 	import DockHeader from '$components/DockHeader.svelte';
 	import DockMap from '$components/DockMap.svelte';
 	import Jobs from '$components/Jobs.svelte';
 
+	/* ----- */
+
 	export let dockID = '';
 
-	// const dockSlug = $page.url.pathname.replace(/\//g, '');
 	const dockSlug = 'dock-' + dockID.replace(/\//g, '');
 
 	let dock = {};
 	let activeJobs = {};
 	let remoteSwitch = {};
+	let svgMap = '';
 
 	let loading = true;
 
-	const getSwitchStatus = async () => {
-		return; // TODO:
-		remoteSwitch = await api.getLedPanelStatus();
+	/* ----- */
 
+	const getSwitchStatus = async () => {
+		remoteSwitch = await apiRelay.getLedPanelStatus();
 		console.log('Getting switch data...');
 
-		if (remoteSwitch.data) {
+		if (remoteSwitch?.data) {
 			console.log('LED Panel Status: ');
 			console.log(remoteSwitch.data);
 		}
 	};
 
 	const switchLedPanel = async (action = '') => {
-		return; // TODO:
 		console.log('LED Button Clicked: ' + action + ' for dock: ' + dockID);
-		await api.switchLedPanel(action);
+		await apiRelay.switchLedPanel(action);
 		await getSwitchStatus();
 	};
 
-	// async function getSwitchStatus() {
+	const loadDockData = async () => {
+		dock = await api.getDockBySlug({
+			slug: dockSlug
+		});
 
-	// 	console.log("Getting switch data...")
+		activeJobs = await api.getActiveJobsByDockSlug({
+			slug: dockSlug
+		});
 
-	// 	remoteSwitch = await fetch('http://192.168.1.224:8081/zeroconf/info', {
-	// 			method: "POST",
-	// 			body: JSON.stringify(switchData),
-	// 			headers: {"Content-type": "application/json"}
-	// 	}).then((r) => {
-	// 		// loading = false;
-	// 		console.log(r.json());
-	// 		return r.json();
-	// 	}).catch(err => console.log(err));
-	// }
-
-	const getDockData = async () => {
-		dock = await api.getDockBySlug({ slug: dockSlug });
-		activeJobs = await api.getActiveJobsByDockSlug({ slug: dockSlug });
 		loading = false;
 
-		// activeJobs = await fetch(
-		// 	`https://ddms.greenoak.ee/wp-admin/admin-ajax.php?action=get_active_jobs_by_dock_slug&slug=${dockSlug}`
-		// ).then((r) => {
-		// 	loading = false;
-		// 	return r.json();
-		// });
+		if (dock.ok) {
+			svgMap = dock.data.svg_imagemap;
+		}
 	};
 
 	const renderAreaStatLabels = (areaStats, positionOffset) => {
@@ -80,6 +68,10 @@
 		// creating and positioning number lable elements
 		Object.entries(areaStats).forEach(([area_id, job_count]) => {
 			areaPos = jQuery(`#a-${area_id}`).position();
+
+			if (!areaPos) {
+				return;
+			}
 
 			//creating
 			jQuery('.dock-map').after(
@@ -140,7 +132,7 @@
 			console.log(areaStatLabels);
 		}
 
-		if (remoteSwitch.data) {
+		if (remoteSwitch && remoteSwitch.data) {
 			console.log('Switch STATAUS: ');
 			console.log(remoteSwitch.data.switch);
 			if (activeJobs.data && activeJobs.data.length > 0) {
@@ -155,55 +147,60 @@
 
 	onMount(() => {
 		getSwitchStatus();
-		getDockData();
+		loadDockData();
 	});
-
-	let svgMap = '';
-
-	$: if (dock.ok) {
-		svgMap = dock.data.svg_imagemap;
-	}
 </script>
 
-<div class="dock">
-	{#if remoteSwitch.data && remoteSwitch.data.switch}
-		<!-- <pre>Switch: {JSON.stringify(remoteSwitch, undefined, 2)}</pre> -->
-		<div class="switch_buttons">
-			<p>Led Panel Status: {remoteSwitch.data.switch}</p>
-		</div>
-	{/if}
-
+<svelte:head>
 	{#if dock.ok}
-		<DockHeader {dock} jobs={activeJobs} />
-
-		<section>
-			{#if svgMap}
-				<DockMap {svgMap} {getDockData} />
-			{/if}
-
-			<Jobs jobs={activeJobs} {getDockData} />
-		</section>
+		<title>{dock.data.name || 'Dock'}</title>
 	{:else}
-		<section>
-			<RequestLoader />
-			<h1>Loading Dock Data</h1>
-		</section>
+		<title>Dock</title>
 	{/if}
-</div>
+</svelte:head>
+
+{#if remoteSwitch && remoteSwitch.data && remoteSwitch.data.switch}
+	<!-- <pre>Switch: {JSON.stringify(remoteSwitch, undefined, 2)}</pre> -->
+	<div class="switch_buttons">
+		<p>Led Panel Status: {remoteSwitch.data.switch}</p>
+	</div>
+{/if}
+
+{#if !dock.ok}
+	<section class="loader">
+		<RequestLoader />
+		<h1>Loading Dock Data</h1>
+	</section>
+{:else}
+	<DockHeader {dock} jobs={activeJobs} />
+
+	<section class="dock">
+		{#if svgMap}
+			<DockMap {svgMap} {loadDockData} />
+		{/if}
+
+		<Jobs jobs={activeJobs} {loadDockData} />
+	</section>
+{/if}
 
 <style>
 	h1 {
-		text-align: center;
 	}
-	.dock {
-		padding: 0 2%;
-	}
-	section {
+
+	.loader {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		flex: 1;
+	}
+
+	.loader > h1 {
+		text-align: center;
+	}
+
+	.dock {
+		padding: 0 20px;
 	}
 
 	:global(span[class*='-area_stat']) {
@@ -228,10 +225,10 @@
 	}
 
 	@media only screen and (min-width: 1600px) {
-		section {
+		.dock {
 			display: grid;
-			grid-template-columns: 50% 50%;
-			gap: 20px;
+			grid-template-columns: 1fr 1fr;
+			grid-gap: 20px;
 			align-items: flex-start;
 		}
 	}

@@ -3,18 +3,19 @@
 	import { Modals, closeModal, openModal, modals } from 'svelte-modals';
 	import { debug } from 'svelte/internal';
 	import { fade } from 'svelte/transition';
-	import ModalAddJob from './ModalAddJob.svelte';
+
+	import ModalAddJob from '$components/ModalAddJob.svelte';
 
 	export let svgMap;
-	export let getDockData;
+	export let loadDockData;
 
 	let shapes;
 
-	function getMapShapes() {
+	const getMapShapes = () => {
 		shapes = Array.from(document.querySelectorAll('g[id*="-areas"] path[id*="a-"]'));
-	}
+	};
 
-	function handleOpenModal(title, content = '', dock_id, area_id) {
+	const handleOpenModal = (title, content = '', dock_id, area_id) => {
 		openModal(ModalAddJob, {
 			title: title,
 			body: content,
@@ -23,12 +24,12 @@
 			onJobAddSuccess: () => {
 				console.log('### Dock Map: Job Added Successfully ###');
 				closeModal();
-				getDockData();
+				loadDockData();
 			}
 		});
-	}
+	};
 
-	async function fetchArea(areaId) {
+	const fetchArea = async (areaId) => {
 		console.log('a-id: ' + areaId);
 		try {
 			const response = await fetch(
@@ -40,9 +41,9 @@
 		} catch (err) {
 			console.error(err);
 		}
-	}
+	};
 
-	async function handleAreaClick(e) {
+	const handleAreaClick = async (e) => {
 		// console.log('Shapes:');
 		console.log('handleAreaClick:');
 		console.log(e.target.id);
@@ -75,9 +76,11 @@
 		// 		}
 		// 	});
 		// }
-	}
+	};
 
-	onMount(getMapShapes);
+	onMount(() => {
+		getMapShapes();
+	});
 </script>
 
 {#if svgMap}

@@ -24,14 +24,14 @@
 	}
 
 	.loader {
-		display: grid;
-		grid-auto-flow: column;
-		justify-content: center;
-
-		height: 60px;
+		height: 40px;
 
 		margin: 0;
 		padding: 10px;
+
+		display: grid;
+		grid-auto-flow: column;
+		justify-content: center;
 
 		cursor: progress;
 	}

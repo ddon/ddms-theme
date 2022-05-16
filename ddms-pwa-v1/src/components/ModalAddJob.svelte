@@ -5,9 +5,10 @@
 
 	import api from '$lib/api';
 
+	/* ----- */
+
 	export let isOpen;
 	export let title;
-	// export let body;
 	export let dock_id;
 	export let area_id;
 
@@ -25,6 +26,8 @@
 	};
 
 	let addingJobErrorClasses = addingJobErrorClassesDefault;
+
+	/* ----- */
 
 	async function fetchCompanies() {
 		companies = await fetch(
@@ -96,11 +99,13 @@
 			<div>
 				<form id="add_new" on:submit|preventDefault={submitForm}>
 					<input type="hidden" name="job_status" id="job_status" value="1" />
+
 					<input type="hidden" name="dock" id="dock" value={dock_id} />
+
 					<input type="hidden" name="dock_area" id="dock_area" value={area_id} />
 
-					<label for="title" class={addingJobErrorClasses.title}
-						>Job title / Название рабты
+					<label for="title" class={addingJobErrorClasses.title}>
+						Job title / Название работы
 						<input
 							type="text"
 							name="title"
@@ -112,11 +117,12 @@
 					</label>
 
 					<label for="description">Description / Описание работ</label>
+
 					<textarea name="description" id="description" rows="4" />
 
 					<div class="company_fields form_row">
-						<label for="company" class={addingJobErrorClasses.company}
-							>Company / Фирма
+						<label for="company" class={addingJobErrorClasses.company}>
+							Company / Фирма
 							<select name="company" id="company" required>
 								<option disabled selected value>select...</option>
 								{#if companies.ok}
@@ -127,8 +133,8 @@
 							</select>
 						</label>
 
-						<label for="new_company"
-							>Add Company / Добавить фирму
+						<label for="new_company">
+							Add Company / Добавить фирму
 							<input disabled type="text" name="new_company" id="new_company" />
 						</label>
 					</div>
@@ -185,12 +191,13 @@
 		text-align: center;
 		font-size: 24px;
 	}
+
 	/*
 	p {
 		text-align: center;
 		margin-top: 16px;
 	}
-
+*/
 	.actions {
 		margin-top: 32px;
 		display: flex;
@@ -233,10 +240,7 @@
 		background-color: rgb(231, 231, 231);
 	}
 
-	input[type='submit']:hover {
-		background-color: #45a049;
-	}
-
+	/*
 	input[type='submit'] {
 		width: 100%;
 		background-color: var(--blue);
@@ -247,7 +251,12 @@
 		border-radius: 4px;
 		cursor: pointer;
 	}
+
+	input[type='submit']:hover {
+		background-color: #45a049;
+	}
 */
+
 	form#add_new {
 		border-radius: 5px;
 		background-color: #f2f2f2;
@@ -263,7 +272,9 @@
 
 	button {
 		width: 50%;
+		height: 30px;
 	}
+
 	button.close {
 		background-color: white;
 		color: var(--blue);

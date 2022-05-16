@@ -13,14 +13,14 @@
 
 <style global>
 	:root {
+		--gray-150: #e9e9e9;
+		--gray-500: #6b7280;
 		--gray-600: #4b5563;
 
 		--red: #d31145;
 		--red-50: #d3114550;
 
 		--blue: #0b2265;
-
-		--request-loader-bg-color: var(--gray-600);
 	}
 
 	:global(body) {

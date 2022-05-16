@@ -1,9 +1,24 @@
 <script>
 	export let buttonType = 'submit';
 	export let disabled = false;
+	export let onClick = null;
+
+	export let isRed = false;
+
+	const onButtonClick = (evt) => {
+		if (onClick) {
+			onClick();
+		}
+	};
 </script>
 
-<button type={buttonType} class="button" class:disabled>
+<button
+	on:click={onButtonClick}
+	type={buttonType}
+	class="button"
+	class:buttonRed={isRed}
+	class:disabled
+>
 	<slot />
 </button>
 
@@ -21,7 +36,6 @@
 		text-decoration: none;
 		border-radius: 25px;
 		border: 1px solid var(--blue);
-		/* box-shadow: 2px 4px 10px #a9a9a9; */
 		transition: 0.5s background, color;
 
 		cursor: pointer;
@@ -31,5 +45,15 @@
 		color: var(--blue);
 		background-color: white;
 		border: 1px solid var(--blue);
+	}
+
+	.buttonRed {
+		background-color: var(--red);
+		border-color: var(--red);
+	}
+
+	.buttonRed:hover {
+		background-color: var(--red-50);
+		border-color: var(--red-50);
 	}
 </style>

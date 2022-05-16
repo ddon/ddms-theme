@@ -23,7 +23,7 @@
 			{dock.data.name}
 			<!-- | {renderDockStatus(dock.data.connection)} -->
 			{#if jobs.ok}
-				| active jobs: {countActiveJobs(jobs)}
+				| Active jobs: {countActiveJobs(jobs)}
 			{/if}
 		</h1>
 	{:else}
@@ -38,6 +38,9 @@
 		justify-content: center;
 		align-items: center;
 		flex: 1;
+
+		background-color: var(--gray-150);
+		border-bottom: 1px solid var(--gray-500);
 	}
 
 	h1 {

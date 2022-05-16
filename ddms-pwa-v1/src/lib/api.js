@@ -2,7 +2,6 @@ import settings from '$settings';
 import net from '$lib/net';
 
 const WP_ADMIN_URL = `${settings.DOMAIN_URL}/wp-admin/admin-ajax.php`;
-const RELAY_URL = `${settings.RELAY_DOMAIN_URL}/relay.php`;
 
 const addNewJob = async (params = {}) => {
 	const url = `${WP_ADMIN_URL}?action=add_new_job`;
@@ -42,27 +41,9 @@ const getActiveJobsByDockSlug = async (params = {}) => {
 	return res;
 };
 
-const getLedPanelStatus = async () => {
-	const res = await net.get(RELAY_URL, {
-		cmd: 'info'
-	});
-
-	return res;
-};
-
-const switchLedPanel = async (cmd = '') => {
-	const res = await net.get(RELAY_URL, {
-		cmd
-	});
-
-	return res;
-};
-
 export default {
 	addNewJob,
 	getDockBySlug,
 	closeJobByPin,
-	getActiveJobsByDockSlug,
-	getLedPanelStatus,
-	switchLedPanel
+	getActiveJobsByDockSlug
 };

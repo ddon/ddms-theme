@@ -5,6 +5,7 @@
 	import images from '$core/images';
 
 	import Button from '$components/Button.svelte';
+	import Input from '$components/Input.svelte';
 
 	const handleOnSubmit = (evt) => {
 		const formData = new FormData(evt.target);
@@ -32,7 +33,7 @@
 	<h1>BLRT Tallinn Shipyard DDMS</h1>
 
 	<form class="content" on:submit|preventDefault={handleOnSubmit}>
-		<input type="text" id="slug" name="slug" />
+		<Input name="slug" />
 
 		<Button>Go</Button>
 	</form>
@@ -47,34 +48,11 @@
 		justify-content: center;
 		align-items: center;
 
-		background-color: #e9e9e9;
+		background-color: var(--gray-150);
 	}
 
 	img.logo {
 		width: 100%;
 		max-width: 100px;
-	}
-
-	input[type='text'] {
-		padding: 8px;
-
-		border: 2px solid #00000000;
-		border-radius: 25px;
-		border: 1px solid white;
-
-		transition: 0.5s border;
-
-		box-shadow: inset 0px -2px 4px #939393;
-	}
-
-	input[type='text']:hover {
-		border-radius: 25px;
-		/* border: 1px solid rgb(165, 165, 165); */
-		padding: 8px;
-	}
-
-	input[type='text']:focus-visible,
-	input[type='text']:focus {
-		outline: 1px solid var(--blue);
 	}
 </style>
