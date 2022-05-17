@@ -8,7 +8,7 @@
 	input[type='text'] {
 		padding: 8px;
 
-		border-radius: 25px;
+		border-radius: 5px;
 		border: 1px solid white;
 
 		transition: 0.5s border;
@@ -17,8 +17,6 @@
 	}
 
 	input[type='text']:hover {
-		border-radius: 25px;
-		padding: 8px;
 	}
 
 	input[type='text']:focus-visible,

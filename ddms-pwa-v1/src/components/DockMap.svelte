@@ -1,15 +1,25 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, afterUpdate } from 'svelte';
 	import { Modals, closeModal, openModal, modals } from 'svelte-modals';
 	import { debug } from 'svelte/internal';
 	import { fade } from 'svelte/transition';
 
+	import jQuery from 'jquery';
+
+	import api from '$lib/api';
 	import ModalAddJob from '$components/ModalAddJob.svelte';
 
-	export let svgMap;
-	export let loadDockData;
+	/* ----- */
+
+	const statPosOffset = 4;
+
+	export let svgMap = '';
+	export let jobs = [];
+	export let loadDockData = () => {};
 
 	let shapes;
+
+	/* ----- */
 
 	const getMapShapes = () => {
 		shapes = Array.from(document.querySelectorAll('g[id*="-areas"] path[id*="a-"]'));
@@ -29,57 +39,114 @@
 		});
 	};
 
-	const fetchArea = async (areaId) => {
-		console.log('a-id: ' + areaId);
-		try {
-			const response = await fetch(
-				`https://ddms.greenoak.ee/wp-admin/admin-ajax.php?action=get_area_by_id&areaId=${areaId}`
-			);
-			const json = await response.json();
-			console.log(json);
-			return json;
-		} catch (err) {
-			console.error(err);
-		}
-	};
-
-	const handleAreaClick = async (e) => {
-		// console.log('Shapes:');
-		console.log('handleAreaClick:');
-		console.log(e.target.id);
-
-		if (shapes.indexOf(e.target) >= 0) {
-			const elementId = e.target.id;
+	const handleAreaClick = async (evt) => {
+		if (shapes.indexOf(evt.target) >= 0) {
+			const elementId = evt.target.id;
 			const areaId = elementId.replace('a-', '');
 
-			const areaData = await fetchArea(areaId).then((res) => {
-				return res.data;
-			});
+			const res = await api.getMapAreaById({ areaId });
 
-			if (areaData) {
+			if (res && res.ok) {
+				const areaData = res.data;
 				const title = areaData.name_en + '<br>' + areaData.name_ru;
 				const content = 'hello!';
-				console.log(areaData);
 				handleOpenModal(title, content, areaData.dock, areaId);
 			}
-
-			// console.log(areaData);
 		}
 
-		// if (shapes) {
-		// 	shapes.forEach((shape) => {
-		// 		if (shape.className.baseVal !== 'active_area') {
-		// 			shape.addEventListener('click', (e) => {
-		// 				// alert('Area: ' + e.target.id);
-		// 				console.log(e.target.id);
-		// 			});
-		// 		}
-		// 	});
-		// }
+		//if (shapes) {
+		//	shapes.forEach((shape) => {
+		//		if (shape.className.baseVal !== 'active_area') {
+		//			shape.addEventListener('click', (e) => {
+		//				// alert('Area: ' + e.target.id);
+		//				console.log(e.target.id);
+		//			});
+		//		}
+		//	});
+		//}
 	};
+
+	/* ----- */
+
+	const mapClearArea = () => {
+		jQuery('.active_area').removeClass('active_area');
+		jQuery('span.stat').remove();
+	};
+
+	const mapResize = () => {
+		jQuery(window).resize(() => {
+			let activeAreas = Array.from(jQuery('.active_area'));
+
+			activeAreas.forEach((a) => {
+				let aNewPos = jQuery(a).position();
+				let aMark = a.className.baseVal.split(' ')[1];
+
+				jQuery('.stat.' + aMark).css({
+					top: aNewPos.top + statPosOffset,
+					left: aNewPos.left + statPosOffset
+				});
+			});
+		});
+	};
+
+	const renderAreaStatLabels = (areaStats) => {
+		if (!areaStats) {
+			console.error('renderAreaStatLabels failed');
+			return;
+		}
+
+		let areaPos;
+
+		console.log(areaStats);
+		// creating and positioning number lable elements
+		Object.entries(areaStats).forEach(([area_id, job_count]) => {
+			areaPos = jQuery(`#a-${area_id}`).position();
+
+			if (!areaPos) {
+				return;
+			}
+
+			//creating
+			jQuery('.dock-map').after(
+				`<span class='a-${area_id}-area_stat stat a-${area_id}-mark'>${job_count}</span>`
+			);
+
+			//positioning
+			jQuery(`.a-${area_id}-area_stat`).css({
+				top: areaPos.top + statPosOffset,
+				left: areaPos.left + statPosOffset
+			});
+		});
+	};
+
+	const mapUpdate = () => {
+		mapClearArea();
+
+		let areaStatLabels = {};
+
+		jobs.forEach((job) => {
+			jQuery(`#a-${job.dock_area}`).addClass(`active_area a-${job.dock_area}-mark`);
+
+			if (areaStatLabels[job.dock_area]) {
+				areaStatLabels[job.dock_area] += 1;
+			} else {
+				areaStatLabels[job.dock_area] = 1;
+			}
+		});
+
+		renderAreaStatLabels(areaStatLabels);
+	};
+
+	/* ----- */
 
 	onMount(() => {
 		getMapShapes();
+
+		mapResize();
+	});
+
+	afterUpdate(() => {
+		mapUpdate();
 	});
 </script>
 
@@ -113,5 +180,22 @@
 
 	:global(g[id*='-areas']) {
 		cursor: pointer;
+	}
+
+	:global(span[class*='-area_stat']) {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		position: absolute;
+
+		color: white;
+		background-color: var(--red);
+		border-radius: 50%;
+		height: 25px;
+		width: 25px;
+
+		cursor: default;
+		pointer-events: none;
 	}
 </style>

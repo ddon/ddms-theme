@@ -5,6 +5,11 @@
 
 	import api from '$lib/api';
 
+	import Input from '$components/forms/Input.svelte';
+	import InputWithMic from '$components/forms/InputWithMic.svelte';
+	import Textarea from '$components/forms/Textarea.svelte';
+	import Select from '$components/forms/Select.svelte';
+
 	/* ----- */
 
 	export let isOpen;
@@ -15,6 +20,7 @@
 	export let onJobAddSuccess;
 
 	let companies = {};
+	let companiesOptions = [];
 
 	let addingJobErrors = {};
 
@@ -29,129 +35,117 @@
 
 	/* ----- */
 
-	async function fetchCompanies() {
-		companies = await fetch(
-			`https://ddms.greenoak.ee/wp-admin/admin-ajax.php?action=get_all_companies`
-		).then((r) => {
-			return r.json();
+	const getCompanyOptions = (cs) => {
+		return cs.map((c) => ({
+			value: c.id,
+			name: c.name
+		}));
+	};
+
+	/* ----- */
+
+	const loadCompanies = async () => {
+		companies = await api.getCompanies();
+
+		if (companies.ok) {
+			companiesOptions = getCompanyOptions(companies.data || []);
+		}
+	};
+
+	const onAudio = async (audio) => {
+		const res = await api.postVoiceFile({
+			dock: dock_id,
+			audioFile: audio
 		});
-	}
 
-	onMount(fetchCompanies);
+		console.log(res);
+		if (res.ok) {
+			// TODO: set input field value res.text
+		}
+	};
 
-	const submitForm = (e) => {
-		const formData = new FormData(e.target);
+	const submitForm = async (evt) => {
+		const formData = new FormData(evt.target);
 
 		const newJob = {
 			job_status: formData.get('job_status'),
 			dock: formData.get('dock'),
 			dock_area: formData.get('dock_area'),
+
 			title: formData.get('title'),
 			description: formData.get('description'),
 			company: formData.get('company'),
-			// new_company: formData.get('new_company'),
 			person: formData.get('person'),
 			pin: formData.get('pin')
 		};
 
-		console.log('newJob:');
-		console.log(newJob);
+		const res = await api.addNewJob(newJob);
 
-		api.addNewJob(newJob).then((res) => {
-			if (res.ok) {
-				console.log('### Modal: Job added. Closing modal form...');
-				onJobAddSuccess();
-			} else {
-				console.log('#### RES:');
-				console.log(res);
+		if (res.ok) {
+			onJobAddSuccess();
+		} else {
+			addingJobErrorClasses = {
+				...addingJobErrorClassesDefault
+			};
 
-				addingJobErrorClasses = { ...addingJobErrorClassesDefault };
-				addingJobErrors[res.field] = res.error;
-				addingJobErrorClasses[res.field] = 'error';
-			}
-		});
+			addingJobErrors[res.field] = res.error;
+			addingJobErrorClasses[res.field] = true;
+		}
 	};
 
-	// function getFieldErrorClass(f) {
-	// 	if (addingJobErrors[f]) {
-	// 		return "error";
-	// 	} else {
-	// 		return "no-error-class";
-	// 	}
-	// }
+	/* ----- */
 
-	// function getFieldError(f) {
-	// 	if (addingJobErrors[f]) {
-	// 		return addingJobErrors[f];
-	// 	} else {
-	// 		return "no-error";
-	// 	}
-	// }
-
-	// input autofocus
+	onMount(() => {
+		loadCompanies();
+	});
 </script>
 
 {#if isOpen}
-	<!-- on:introstart and on:outroend are required to transition 1 at a time between modals -->
 	<div role="dialog" class="modal" in:fly={{ y: 50 }} out:fade>
 		<div class="contents">
 			<h2>{@html title}</h2>
-			<div>
-				<form id="add_new" on:submit|preventDefault={submitForm}>
-					<input type="hidden" name="job_status" id="job_status" value="1" />
 
-					<input type="hidden" name="dock" id="dock" value={dock_id} />
+			<form id="add_new" on:submit|preventDefault={submitForm}>
+				<input type="hidden" name="job_status" id="job_status" value="1" />
 
-					<input type="hidden" name="dock_area" id="dock_area" value={area_id} />
+				<input type="hidden" name="dock" id="dock" value={dock_id} />
 
-					<label for="title" class={addingJobErrorClasses.title}>
-						Job title / Название работы
-						<input
-							type="text"
-							name="title"
-							id="title"
-							required
-							oninvalid="this.setCustomValidity('Please enter job title / Введите название работы')"
-							oninput="this.setCustomValidity('')"
-						/>
-					</label>
+				<input type="hidden" name="dock_area" id="dock_area" value={area_id} />
 
-					<label for="description">Description / Описание работ</label>
+				<InputWithMic
+					name="title"
+					label="Job title / Название работы"
+					error={addingJobErrorClasses.title}
+					requiredMessage="Please enter job title / Введите название работы"
+					required
+					{onAudio}
+				/>
 
-					<textarea name="description" id="description" rows="4" />
+				<Textarea name="description" label="Description / Описание работ" />
 
-					<div class="company_fields form_row">
-						<label for="company" class={addingJobErrorClasses.company}>
-							Company / Фирма
-							<select name="company" id="company" required>
-								<option disabled selected value>select...</option>
-								{#if companies.ok}
-									{#each companies.data as c}
-										<option value={c.id}>{c.name}</option>
-									{/each}
-								{/if}
-							</select>
-						</label>
+				<div class="company_fields form_row">
+					<Select
+						name="company"
+						label="Company / Фирма"
+						options={companiesOptions}
+						error={addingJobErrorClasses.company}
+					/>
 
-						<label for="new_company">
-							Add Company / Добавить фирму
-							<input disabled type="text" name="new_company" id="new_company" />
-						</label>
-					</div>
+					<Input name="new_company" label="Add Company / Добавить фирму" disabled />
+				</div>
 
-					<div class="form_row">
-						<label for="person" class={addingJobErrorClasses.person}
-							>Person / Исполнитель
-							<input type="text" name="person" id="person" required />
-						</label>
+				<div class="form_row">
+					<Input
+						name="person"
+						label="Person / Исполнитель"
+						error={addingJobErrorClasses.person}
+						required
+					/>
 
-						<label for="pin" class={addingJobErrorClasses.pin}
-							>PIN
-							<input type="number" name="pin" id="pin" required />
-						</label>
-					</div>
-				</form>
-			</div>
+					<Input name="pin" label="PIN" type="number" error={addingJobErrorClasses.pin} required />
+				</div>
+			</form>
+
 			<div class="actions">
 				<button class="close" on:click={closeModal}>Close</button>
 				<!-- <button class="ok" type="submit" on:click={onModalOk}>Ok</button> -->
@@ -207,57 +201,10 @@
 		padding: 0;
 	}
 
-	label.error {
-		background-color: #f6482c;
-	}
-
 	form#add_new {
 		display: flex;
 		flex-direction: column;
-	}
 
-	form#add_new label {
-		padding: 8px;
-		border-radius: 4px;
-	}
-
-	input[type='text'],
-	input[type='number'],
-	input[type='text'],
-	textarea,
-	select {
-		width: 100%;
-		padding: 12px 20px;
-		margin: 8px 0;
-		display: inline-block;
-		border: 1px solid #ccc;
-		background-color: white;
-		border-radius: 4px;
-		box-sizing: border-box;
-	}
-
-	input:disabled {
-		background-color: rgb(231, 231, 231);
-	}
-
-	/*
-	input[type='submit'] {
-		width: 100%;
-		background-color: var(--blue);
-		color: white;
-		padding: 14px 20px;
-		margin: 8px 0;
-		border: none;
-		border-radius: 4px;
-		cursor: pointer;
-	}
-
-	input[type='submit']:hover {
-		background-color: #45a049;
-	}
-*/
-
-	form#add_new {
 		border-radius: 5px;
 		background-color: #f2f2f2;
 		padding: 20px;

@@ -27,6 +27,22 @@ const post = async (url, params = {}, headers = {}) => {
 	}
 };
 
+const postForm = async (url, params = {}) => {
+	try {
+		const formData = new FormData();
+
+		Object.keys(params).forEach((paramName) => {
+			formData.append(paramName, params[paramName]);
+		});
+
+		const response = await axios.post(url, formData);
+		return response.data;
+	} catch (err) {
+		console.error(err);
+		return {};
+	}
+};
+
 const postJson = async (url, json = {}, headers = {}) => {
 	try {
 		const res = await axios.post(url, json, {
@@ -43,5 +59,6 @@ const postJson = async (url, json = {}, headers = {}) => {
 export default {
 	get,
 	post,
+	postForm,
 	postJson
 };

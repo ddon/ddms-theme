@@ -29,16 +29,18 @@
 
 		display: inline-block;
 
+		background-color: var(--blue);
+
+		border-radius: 5px;
+		border: 1px solid var(--blue);
+
 		color: white;
 		font-size: 18px;
-
-		background-color: var(--blue);
 		text-decoration: none;
-		border-radius: 25px;
-		border: 1px solid var(--blue);
-		transition: 0.5s background, color;
 
 		cursor: pointer;
+
+		transition: 0.5s background, color;
 	}
 
 	.button:hover {

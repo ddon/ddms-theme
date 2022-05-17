@@ -3,6 +3,11 @@ const logos = {
 	blrt512: '/logos/blrt-512.png'
 };
 
+const icons = {
+	mic: '/icons/mic.svg'
+};
+
 export default {
-	logos
+	logos,
+	icons
 };

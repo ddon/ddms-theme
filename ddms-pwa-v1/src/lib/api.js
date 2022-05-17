@@ -3,6 +3,21 @@ import net from '$lib/net';
 
 const WP_ADMIN_URL = `${settings.DOMAIN_URL}/wp-admin/admin-ajax.php`;
 
+const getDockBySlug = async (params = {}) => {
+	const res = await net.get(WP_ADMIN_URL, {
+		action: 'get_dock_by_slug',
+		slug: params.slug
+	});
+
+	return res;
+};
+
+const getCompanies = async () => {
+	return await net.get(WP_ADMIN_URL, {
+		action: 'get_all_companies'
+	});
+};
+
 const addNewJob = async (params = {}) => {
 	const url = `${WP_ADMIN_URL}?action=add_new_job`;
 
@@ -23,15 +38,6 @@ const closeJobByPin = async (params = {}) => {
 	return res;
 };
 
-const getDockBySlug = async (params = {}) => {
-	const res = await net.get(WP_ADMIN_URL, {
-		action: 'get_dock_by_slug',
-		slug: params.slug
-	});
-
-	return res;
-};
-
 const getActiveJobsByDockSlug = async (params = {}) => {
 	const res = await net.get(WP_ADMIN_URL, {
 		action: 'get_active_jobs_by_dock_slug',
@@ -41,9 +47,32 @@ const getActiveJobsByDockSlug = async (params = {}) => {
 	return res;
 };
 
+const getMapAreaById = async (params = {}) => {
+	const res = await net.get(WP_ADMIN_URL, {
+		action: 'get_area_by_id',
+		areaId: params.areaId
+	});
+
+	return res;
+};
+
+const postVoiceFile = async (params = {}) => {
+	const url = `${WP_ADMIN_URL}?action=get_voice_transcription`;
+
+	const res = await net.postForm(url, {
+		dock: params.dock,
+		audioFile: params.audioFile
+	});
+
+	return res;
+};
+
 export default {
-	addNewJob,
 	getDockBySlug,
+	getCompanies,
+	addNewJob,
 	closeJobByPin,
-	getActiveJobsByDockSlug
+	getActiveJobsByDockSlug,
+	getMapAreaById,
+	postVoiceFile
 };
