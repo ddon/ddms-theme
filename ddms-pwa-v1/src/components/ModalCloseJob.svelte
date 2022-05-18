@@ -163,15 +163,6 @@
 		margin-top: 16px;
 	}
 
-	.actions {
-		margin-top: 32px;
-		display: flex;
-		justify-content: space-between;
-		gap: 8px;
-		background-color: unset;
-		padding: 0;
-	}
-
 	label.error {
 		background-color: #f6482c;
 		color: white;
@@ -244,13 +235,24 @@
 		grid-template-columns: 1fr 1fr;
 		grid-gap: 10px;
 	}
+*/
+
+	.actions {
+		margin-top: 32px;
+		display: flex;
+		justify-content: space-between;
+		gap: 8px;
+		background-color: unset;
+		padding: 0;
+	}
 
 	button {
 		width: 50%;
+		height: 30px;
 	}
+
 	button.close {
 		background-color: white;
 		color: var(--blue);
 	}
-*/
 </style>

@@ -7,7 +7,7 @@
 
 	import Input from '$components/forms/Input.svelte';
 	import InputWithMic from '$components/forms/InputWithMic.svelte';
-	import Textarea from '$components/forms/Textarea.svelte';
+	import TextareaWithMic from '$components/forms/TextareaWithMic.svelte';
 	import Select from '$components/forms/Select.svelte';
 
 	/* ----- */
@@ -49,18 +49,6 @@
 
 		if (companies.ok) {
 			companiesOptions = getCompanyOptions(companies.data || []);
-		}
-	};
-
-	const onAudio = async (audio) => {
-		const res = await api.postVoiceFile({
-			dock: dock_id,
-			audioFile: audio
-		});
-
-		console.log(res);
-		if (res.ok) {
-			// TODO: set input field value res.text
 		}
 	};
 
@@ -118,10 +106,9 @@
 					error={addingJobErrorClasses.title}
 					requiredMessage="Please enter job title / Введите название работы"
 					required
-					{onAudio}
 				/>
 
-				<Textarea name="description" label="Description / Описание работ" />
+				<TextareaWithMic name="description" label="Description / Описание работ" />
 
 				<div class="company_fields form_row">
 					<Select
@@ -135,10 +122,10 @@
 				</div>
 
 				<div class="form_row">
-					<Input
+					<InputWithMic
 						name="person"
 						label="Person / Исполнитель"
-						error={addingJobErrorClasses.person}
+						error={addingJobErrorClasses.title}
 						required
 					/>
 

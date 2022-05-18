@@ -43,9 +43,10 @@
 	section {
 		height: 100vh;
 
+		padding: 100px 10px 10px 10px;
+
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
 		align-items: center;
 
 		background-color: var(--gray-150);

@@ -12,13 +12,6 @@
 	export let value = '';
 	export let error = false;
 
-	export let type = 'text';
-
-	export let requiredMessage = '';
-	export let required = false;
-
-	export let disabled = false;
-
 	/* ----- */
 
 	const onClickMic = async () => {
@@ -39,17 +32,8 @@
 		{label}
 	</label>
 
-	<div class="inputWithControl">
-		<input
-			{type}
-			id={name}
-			{name}
-			{value}
-			{required}
-			{disabled}
-			oninput="this.setCustomValidity('')"
-			oninvalid="this.setCustomValidity('{requiredMessage}')"
-		/>
+	<div class="textareaWithControl">
+		<textarea id={name} {name} rows="4">{value}</textarea>
 
 		<div class="mic" on:click={onClickMic}>
 			<IconMic />
@@ -62,7 +46,7 @@
 		color: var(--red-600);
 	}
 
-	.inputWithControl {
+	.textareaWithControl {
 		display: flex;
 	}
 
@@ -81,8 +65,7 @@
 		font-weight: 600;
 	}
 
-	input[type='text'],
-	input[type='number'] {
+	textarea {
 		box-sizing: border-box;
 
 		width: 100%;
@@ -96,9 +79,5 @@
 
 		border: 1px solid #ccc;
 		border-radius: 4px;
-	}
-
-	input:disabled {
-		background-color: rgb(231, 231, 231);
 	}
 </style>
