@@ -5,7 +5,7 @@
 	import images from '$core/images';
 
 	import Button from '$components/Button.svelte';
-	import Input from '$components/Input.svelte';
+	import Input from '$components/forms/Input.svelte';
 
 	const handleOnSubmit = (evt) => {
 		const formData = new FormData(evt.target);
@@ -32,16 +32,18 @@
 
 	<h1>BLRT Tallinn Shipyard DDMS</h1>
 
-	<form class="content" on:submit|preventDefault={handleOnSubmit}>
-		<Input name="slug" />
+	<form on:submit|preventDefault={handleOnSubmit}>
+		<div class="formRow">
+			<Input name="slug" />
 
-		<Button>Go</Button>
+			<Button>Go</Button>
+		</div>
 	</form>
 </section>
 
 <style>
 	section {
-		height: 100vh;
+		height: calc(100vh - 110px);
 
 		padding: 100px 10px 10px 10px;
 
@@ -52,8 +54,18 @@
 		background-color: var(--gray-150);
 	}
 
-	img.logo {
+	.logo {
 		width: 100%;
 		max-width: 100px;
+	}
+
+	form {
+		width: 500px;
+	}
+
+	.formRow {
+		display: grid;
+		grid-auto-flow: column;
+		grid-column-gap: 15px;
 	}
 </style>

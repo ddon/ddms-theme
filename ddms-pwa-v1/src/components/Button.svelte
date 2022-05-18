@@ -1,4 +1,5 @@
 <script>
+	export let form = '';
 	export let buttonType = 'submit';
 	export let disabled = false;
 	export let onClick = null;
@@ -12,22 +13,34 @@
 	};
 </script>
 
-<button
-	on:click={onButtonClick}
-	type={buttonType}
-	class="button"
-	class:buttonRed={isRed}
-	class:disabled
->
-	<slot />
-</button>
+{#if form}
+	<button
+		{form}
+		on:click={onButtonClick}
+		type={buttonType}
+		class="button"
+		class:buttonRed={isRed}
+		class:disabled
+	>
+		<slot />
+	</button>
+{:else}
+	<button
+		on:click={onButtonClick}
+		type={buttonType}
+		class="button"
+		class:buttonRed={isRed}
+		class:disabled
+	>
+		<slot />
+	</button>
+{/if}
 
 <style>
 	.button {
-		padding: 5px 25px;
-		margin: 10px 0 20px 0;
+		height: 45px;
 
-		display: inline-block;
+		padding: 5px 25px;
 
 		background-color: var(--blue);
 
@@ -57,5 +70,11 @@
 	.buttonRed:hover {
 		background-color: var(--red-50);
 		border-color: var(--red-50);
+	}
+
+	.button:disabled {
+		background-color: var(--gray-300);
+		color: var(--gray-600);
+		border-color: var(--gray-600);
 	}
 </style>

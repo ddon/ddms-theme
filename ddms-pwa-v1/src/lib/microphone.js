@@ -4,6 +4,7 @@ const getStream = async () => {
 			video: false,
 			audio: true
 		});
+
 		return steam;
 	} catch (err) {
 		console.error(err);
@@ -46,7 +47,51 @@ const record = async (callback) => {
 	}, 7000);
 };
 
+class Recorder {
+	stopCallback = null;
+	mediaRecorder = null;
+	audioChunks = [];
+
+	constructor(stopCallback) {
+		this.stopCallback = stopCallback;
+	}
+
+	async start() {
+		const stream = await getStream();
+
+		if (!stream) {
+			return;
+		}
+
+		this.audioChunks = [];
+		this.mediaRecorder = new MediaRecorder(stream);
+
+		this.mediaRecorder.start();
+
+		this.mediaRecorder.addEventListener('dataavailable', (evt) => {
+			this.audioChunks.push(evt.data);
+		});
+
+		this.mediaRecorder.addEventListener('stop', () => {
+			const audioBlob = new Blob(this.audioChunks || [], {
+				type: 'audio/wav'
+			});
+
+			this.stopCallback(audioBlob);
+		});
+	}
+
+	stop() {
+		if (!this.mediaRecorder) {
+			return null;
+		}
+
+		this.mediaRecorder.stop();
+	}
+}
+
 export default {
 	getStream,
-	record
+	record,
+	Recorder
 };

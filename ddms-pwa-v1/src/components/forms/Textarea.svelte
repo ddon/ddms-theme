@@ -4,7 +4,7 @@
 	export let error = false;
 </script>
 
-<div>
+<div class="field">
 	<label for={name} class:error>
 		{label}
 	</label>
@@ -13,27 +13,31 @@
 </div>
 
 <style>
+	.field {
+		margin: 0 0 25px 0;
+	}
+
 	.error {
 		color: var(--red-600);
 	}
 
 	label {
+		display: block;
+		margin: 0 0 5px 0;
 		font-weight: 600;
 	}
 
 	textarea {
 		box-sizing: border-box;
+		display: block;
 
 		width: 100%;
 
-		padding: 12px 20px;
-		margin: 8px 0;
+		padding: 12px 10px;
 
-		display: block;
+		background-color: var(--white);
 
-		background-color: white;
-
-		border: 1px solid #ccc;
+		border: 1px solid var(--gray-300);
 		border-radius: 4px;
 	}
 </style>

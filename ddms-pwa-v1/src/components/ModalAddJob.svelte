@@ -3,7 +3,10 @@
 	import { fly, fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
-	import api from '$lib/api';
+	import api from '$lib/api.js';
+	import text from '$core/text.js';
+
+	import Button from '$components/Button.svelte';
 
 	import Input from '$components/forms/Input.svelte';
 	import InputWithMic from '$components/forms/InputWithMic.svelte';
@@ -93,7 +96,7 @@
 		<div class="contents">
 			<h2>{@html title}</h2>
 
-			<form id="add_new" on:submit|preventDefault={submitForm}>
+			<form id="addNewJob" on:submit|preventDefault={submitForm}>
 				<input type="hidden" name="job_status" id="job_status" value="1" />
 
 				<input type="hidden" name="dock" id="dock" value={dock_id} />
@@ -134,9 +137,8 @@
 			</form>
 
 			<div class="actions">
-				<button class="close" on:click={closeModal}>Close</button>
-				<!-- <button class="ok" type="submit" on:click={onModalOk}>Ok</button> -->
-				<button class="ok" form="add_new" type="submit">Add</button>
+				<Button onClick={closeModal} isRed>{text.close}</Button>
+				<Button form="addNewJob">{text.addJob}</Button>
 			</div>
 		</div>
 	</div>
@@ -145,15 +147,15 @@
 <style>
 	.modal {
 		position: fixed;
-		top: 0;
+		top: 20px;
 		bottom: 0;
 		right: 0;
 		left: 0;
+
 		display: flex;
 		justify-content: center;
 		align-items: flex-start;
 
-		/* allow click-through to backdrop */
 		pointer-events: none;
 	}
 
@@ -173,22 +175,17 @@
 		font-size: 24px;
 	}
 
-	/*
-	p {
-		text-align: center;
-		margin-top: 16px;
-	}
-*/
 	.actions {
 		margin-top: 32px;
-		display: flex;
-		justify-content: space-between;
-		gap: 8px;
-		background-color: unset;
 		padding: 0;
+
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: 1fr;
+		grid-column-gap: 8px;
 	}
 
-	form#add_new {
+	form {
 		display: flex;
 		flex-direction: column;
 
@@ -202,15 +199,5 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		grid-gap: 10px;
-	}
-
-	button {
-		width: 50%;
-		height: 30px;
-	}
-
-	button.close {
-		background-color: white;
-		color: var(--blue);
 	}
 </style>

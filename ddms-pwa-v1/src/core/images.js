@@ -4,7 +4,8 @@ const logos = {
 };
 
 const icons = {
-	mic: '/icons/mic.svg'
+	mic: '/icons/mic.svg',
+	stopInRing: '/icons/stop-in-ring.svg'
 };
 
 export default {

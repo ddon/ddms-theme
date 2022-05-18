@@ -1,10 +1,10 @@
 <script>
 	import images from '$core/images';
 
-	export let title = 'Microphone';
+	export let title = 'Stop';
 </script>
 
-<img src={images.icons.mic} alt={title} />
+<img src={images.icons.stopInRing} alt={title} />
 
 <style>
 	img {

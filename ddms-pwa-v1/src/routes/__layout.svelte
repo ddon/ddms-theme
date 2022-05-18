@@ -13,7 +13,11 @@
 
 <style global>
 	:root {
+		--white: #fff;
+
 		--gray-150: #e9e9e9;
+		--gray-200: #e5e7eb;
+		--gray-300: #d1d5db;
 		--gray-500: #6b7280;
 		--gray-600: #4b5563;
 

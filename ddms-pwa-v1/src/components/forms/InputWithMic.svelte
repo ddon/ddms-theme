@@ -1,6 +1,10 @@
 <script>
 	import microphone from '$lib/microphone.js';
+
 	import IconMic from '$components/icons/Mic.svelte';
+	import IconStopInRing from '$components/icons/StopInRing.svelte';
+
+	import RequestLoaderSmall from '$components/RequestLoaderSmall.svelte';
 
 	// TODO:
 	import api from '$lib/api';
@@ -19,22 +23,46 @@
 
 	export let disabled = false;
 
+	let isRecording = false;
+	let isLoading = false;
+	let recorder = null;
+
 	/* ----- */
 
-	const onClickMic = async () => {
-		microphone.record(async (audio) => {
-			const res = await api.postVoiceFile({
-				audioFile: audio
-			});
+	const onRecordedAudio = async (audio) => {
+		if (!audio) {
+			return;
+		}
 
-			if (res.ok) {
-				value = res.text || '';
-			}
+		isLoading = true;
+
+		const res = await api.postVoiceFile({
+			audioFile: audio
 		});
+
+		if (res.ok) {
+			value += res.text || '';
+		}
+
+		isLoading = false;
+	};
+
+	const onClickMic = async () => {
+		isRecording = true;
+
+		recorder = new microphone.Recorder(onRecordedAudio);
+		await recorder.start();
+	};
+
+	const onClickStop = () => {
+		isRecording = false;
+
+		recorder.stop();
+		recorder = null;
 	};
 </script>
 
-<div>
+<div class="field">
 	<label for={name} class:error>
 		{label}
 	</label>
@@ -51,13 +79,27 @@
 			oninvalid="this.setCustomValidity('{requiredMessage}')"
 		/>
 
-		<div class="mic" on:click={onClickMic}>
-			<IconMic />
-		</div>
+		{#if isLoading}
+			<div class="controls">
+				<RequestLoaderSmall />
+			</div>
+		{:else if !isRecording}
+			<div class="controls" on:click={onClickMic}>
+				<IconMic />
+			</div>
+		{:else}
+			<div class="controls" on:click={onClickStop}>
+				<IconStopInRing />
+			</div>
+		{/if}
 	</div>
 </div>
 
 <style>
+	.field {
+		margin: 0 0 25px 0;
+	}
+
 	.error {
 		color: var(--red-600);
 	}
@@ -66,8 +108,8 @@
 		display: flex;
 	}
 
-	.mic {
-		width: 30px;
+	.controls {
+		width: 50px;
 
 		display: grid;
 		justify-content: right;
@@ -78,27 +120,28 @@
 	}
 
 	label {
+		display: block;
+		margin: 0 0 5px 0;
 		font-weight: 600;
 	}
 
 	input[type='text'],
 	input[type='number'] {
 		box-sizing: border-box;
-
-		width: 100%;
-
-		padding: 12px 20px;
-		margin: 8px 0;
-
 		display: block;
 
-		background-color: white;
+		width: 100%;
+		height: 45px;
 
-		border: 1px solid #ccc;
+		padding: 12px 10px;
+
+		background-color: var(--white);
+
+		border: 1px solid var(--gray-300);
 		border-radius: 4px;
 	}
 
 	input:disabled {
-		background-color: rgb(231, 231, 231);
+		background-color: var(--gray-200);
 	}
 </style>
