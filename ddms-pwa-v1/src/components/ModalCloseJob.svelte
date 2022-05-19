@@ -1,7 +1,6 @@
 <script>
-	import { closeModal, closeAllModals, openModal, modals } from 'svelte-modals';
+	import { closeModal } from 'svelte-modals';
 	import { fly, fade } from 'svelte/transition';
-	import { onMount } from 'svelte';
 
 	import api from '$lib/api.js';
 	import text from '$core/text.js';
@@ -114,11 +113,6 @@
 {/if}
 
 <style>
-	.error {
-		color: var(--red-600);
-		font-weight: 600;
-	}
-
 	.modal {
 		position: fixed;
 		top: 20px;
@@ -131,6 +125,11 @@
 		align-items: flex-start;
 
 		pointer-events: none;
+	}
+
+	.error {
+		color: var(--red-600);
+		font-weight: 600;
 	}
 
 	.contents {

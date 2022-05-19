@@ -1,6 +1,8 @@
 <div>
 	<h1>404</h1>
+
 	<h2>Page not found</h2>
+
 	<a class="ddms-button button" href="/">Go back</a>
 </div>
 

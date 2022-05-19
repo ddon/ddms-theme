@@ -24,14 +24,19 @@
 
 	const onRecordedAudio = async (audio) => {
 		if (!audio) {
+			console.log('[microphone]: no audio recorded');
 			return;
 		}
 
 		isLoading = true;
 
+		console.log(`[microphone]: send audio to server`);
+
 		const res = await api.postVoiceFile({
 			audioFile: audio
 		});
+
+		console.log(`[microphone]: server response`, res);
 
 		if (res.ok) {
 			value += res.text || '';
@@ -41,6 +46,8 @@
 	};
 
 	const onClickMic = async () => {
+		console.log(`[microphone]: start recording`);
+
 		isRecording = true;
 
 		recorder = new microphone.Recorder(onRecordedAudio);
@@ -48,6 +55,8 @@
 	};
 
 	const onClickStop = () => {
+		console.log(`[microphone]: stop recording`);
+
 		isRecording = false;
 
 		recorder.stop();

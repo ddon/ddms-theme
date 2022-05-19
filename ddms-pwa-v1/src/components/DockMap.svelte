@@ -1,6 +1,6 @@
 <script>
 	import { onMount, afterUpdate } from 'svelte';
-	import { Modals, closeModal, openModal, modals } from 'svelte-modals';
+	import { openModal, closeModal } from 'svelte-modals';
 	import { debug } from 'svelte/internal';
 	import { fade } from 'svelte/transition';
 

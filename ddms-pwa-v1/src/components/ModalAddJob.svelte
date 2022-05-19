@@ -1,5 +1,5 @@
 <script>
-	import { closeModal, closeAllModals, openModal, modals } from 'svelte-modals';
+	import { closeModal } from 'svelte-modals';
 	import { fly, fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
